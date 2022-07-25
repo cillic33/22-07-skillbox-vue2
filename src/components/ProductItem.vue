@@ -11,29 +11,14 @@
     </h3>
 
     <span class="catalog__price">
-              {{ product.price }} ₽
-            </span>
+      {{ product.price }} ₽
+    </span>
 
     <ul class="colors colors--black">
-      <li class="colors__item">
+      <li class="colors__item" v-for="color in product.colors">
         <label class="colors__label">
-          <input class="colors__radio sr-only" type="radio" name="color-1" value="#73B6EA" checked="">
-          <span class="colors__value" style="background-color: #73B6EA;">
-                  </span>
-        </label>
-      </li>
-      <li class="colors__item">
-        <label class="colors__label">
-          <input class="colors__radio sr-only" type="radio" name="color-1" value="#8BE000">
-          <span class="colors__value" style="background-color: #8BE000;">
-                  </span>
-        </label>
-      </li>
-      <li class="colors__item">
-        <label class="colors__label">
-          <input class="colors__radio sr-only" type="radio" name="color-1" value="#222">
-          <span class="colors__value" style="background-color: #222;">
-                  </span>
+          <input class="colors__radio sr-only" type="radio" v-model="currentColorId" :value="colors[color].id">
+          <span class="colors__value" :style="{backgroundColor: colors[color].value}"></span>
         </label>
       </li>
     </ul>
@@ -41,7 +26,21 @@
 </template>
 
 <script>
+import colors from '@/data/colors';
+
 export default {
-  props: ['product']
+  props: ['product'],
+  data() {
+    return {
+      colors,
+      currentColorId: 0,
+    }
+  }
 };
 </script>
+
+<style lang="stylus" scoped>
+.colors
+  &__value
+    border 1px solid #626262
+</style>

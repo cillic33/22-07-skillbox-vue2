@@ -1,68 +1,65 @@
 <template>
-  <section class="catalog">
 
-    <ProductList :products="products"></ProductList>
+  <div class="content__catalog">
 
-    <ul class="catalog__pagination pagination">
-      <li class="pagination__item">
-        <a class="pagination__link pagination__link--arrow pagination__link--disabled" aria-label="Предыдущая страница">
-          <svg width="8" height="14" fill="currentColor">
-            <use xlink:href="#icon-arrow-left"></use>
-          </svg>
-        </a>
-      </li>
-      <li class="pagination__item">
-        <a class="pagination__link pagination__link--current">
-          1
-        </a>
-      </li>
-      <li class="pagination__item">
-        <a class="pagination__link" href="#">
-          2
-        </a>
-      </li>
-      <li class="pagination__item">
-        <a class="pagination__link" href="#">
-          3
-        </a>
-      </li>
-      <li class="pagination__item">
-        <a class="pagination__link" href="#">
-          4
-        </a>
-      </li>
-      <li class="pagination__item">
-        <a class="pagination__link" href="#">
-          ...
-        </a>
-      </li>
-      <li class="pagination__item">
-        <a class="pagination__link" href="#">
-          10
-        </a>
-      </li>
-      <li class="pagination__item">
-        <a class="pagination__link pagination__link--arrow" href="#" aria-label="Следующая страница">
-          <svg width="8" height="14" fill="currentColor">
-            <use xlink:href="#icon-arrow-right"></use>
-          </svg>
-        </a>
-      </li>
-    </ul>
-  </section>
+    <productFilter :page.sync="page" :price-from.sync="priceFrom" :price-to.sync="priceTo" :category-id.sync="categoryId" :color-id.sync="colorId" />
+
+    <section class="catalog">
+
+      <ProductList :products="products" />
+
+      <BasePagination :page.sync="page" :products-count="productsCount" :per-page="productsPerPage" />
+
+    </section>
+  </div>
+
 </template>
 
 <script>
 import products from "@/data/products";
 import ProductList from "@/components/ProductList.vue";
+import BasePagination from '@/components/BasePagination';
+import productFilter from '@/components/ProductFilter';
 
 export default {
   name: 'App',
-  components: {ProductList},
+  components: {ProductList, BasePagination, productFilter},
   data() {
     return {
-      products
+      page: 1,
+      productsPerPage: 3,
+      priceFrom: 0,
+      priceTo: 0,
+      categoryId: 0,
+      colorId: 0,
     }
   },
+  computed: {
+    products() {
+      const offset = (this.page - 1) * this.productsPerPage;
+      return this.productsFiltered.slice(offset, offset + this.productsPerPage);
+    },
+    productsCount() {
+      return this.productsFiltered.length;
+    },
+    productsFiltered() {
+      let productsFiltered = products;
+
+      if (this.priceFrom > 0) {
+        productsFiltered = productsFiltered.filter(product => product.price >= this.priceFrom);
+      }
+      if (this.priceTo > 0) {
+        productsFiltered = productsFiltered.filter(product => product.price <= this.priceTo);
+      }
+      if (this.categoryId !== 0) {
+        productsFiltered = productsFiltered.filter(product => product.categoryId === this.categoryId);
+      }
+      if (this.colorId > 0) {
+        productsFiltered = productsFiltered.filter(product => product.colors.includes(this.colorId));
+      }
+
+      return productsFiltered;
+    },
+  }
 };
 </script>
