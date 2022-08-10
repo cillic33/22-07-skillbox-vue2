@@ -1,8 +1,8 @@
 <template>
   <div>
-    <a class="catalog__pic" href="#" @click.prevent="gotoPage('product', {id: product.id})">
+    <router-link class="catalog__pic" :to="{name: 'product', params: {id: product.id}}">
       <img :src="product.image" :alt="product.title">
-    </a>
+    </router-link>
 
     <h3 class="catalog__title">
       <a href="#">
@@ -51,4 +51,16 @@ export default {
 .colors
   &__value
     border 1px solid #626262
+
+.catalog
+  &__pic
+    display flex
+    align-items center
+    justify-content center
+    width 100%
+
+    img
+      max-width 236px
+      max-height 300px
+
 </style>

@@ -5,7 +5,7 @@
         Каталог
       </h1>
       <span class="content__info">
-        152 товара
+        Товаров: {{ productsCount }}
       </span>
     </div>
 

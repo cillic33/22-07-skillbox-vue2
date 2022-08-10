@@ -16,3 +16,11 @@ export default {
   components: {ProductItem}
 };
 </script>
+
+<style lang="stylus">
+.catalog
+  &__item
+    border 1px solid #eee
+    padding 6px
+    border-radius 6px
+</style>
