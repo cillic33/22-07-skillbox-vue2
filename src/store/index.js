@@ -12,7 +12,7 @@ const store = new Vuex.Store({
     ]
   },
   mutations: {
-    addProductsToCart(state, {productId, amount}) {
+    addProductToCart(state, {productId, amount}) {
       const item = state.cartProducts.find(p => p.productId === productId);
       if (item) {
         item.amount += amount;
@@ -42,7 +42,7 @@ const store = new Vuex.Store({
         }
       })
     },
-    cartProductsAmount(state, getters) {
+    cartProductsAmountPrice(state, getters) {
       return getters.cartProducts.reduce((acc, item) => acc + (item.product.price * item.amount), 0);
     }
   }

@@ -58,9 +58,8 @@ export default {
   filters: {numberFormat},
   components: {CartItem},
   computed: {
-    ...mapGetters({products: 'cartProducts', amount: 'cartProductsAmount'})
+    ...mapGetters({products: 'cartProducts', amount: 'cartProductsAmountPrice'})
   }
-
 };
 </script>
 

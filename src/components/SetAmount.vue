@@ -1,14 +1,14 @@
 <template>
-  <div class="form__counter">
-    <button type="button" aria-label="Убрать один товар" @click="decAmount" :disabled="amount === 1">
+  <div class="product__counter form__counter">
+    <button type="button" aria-label="Убрать один товар" @click="computedAmount--" :disabled="amount === 1">
       <svg width="12" height="12" fill="currentColor">
         <use xlink:href="#icon-minus"></use>
       </svg>
     </button>
 
-    <input type="text" id="productAmountInput" v-model="amount">
+    <input type="text" id="productAmountInput" v-model="computedAmount">
 
-    <button type="button" aria-label="Добавить один товар" @click="incAmount">
+    <button type="button" aria-label="Добавить один товар" @click="computedAmount++">
       <svg width="12" height="12" fill="currentColor">
         <use xlink:href="#icon-plus"></use>
       </svg>
@@ -23,17 +23,14 @@ export default {
     event: 'change-amount'
   },
   props: ['amount'],
-  methods: {
-    decAmount() {
-      if (this.amount > 1) { this.amount--; }
-    },
-    incAmount() {
-      this.amount++
-    }
-  },
-  watch: {
-    amount(value) {
-      this.$emit('change-amount', value);
+  computed: {
+    computedAmount: {
+      get() {
+        return this.amount;
+      },
+      set(val) {
+        this.$emit('change-amount', val);
+      }
     }
   }
 };

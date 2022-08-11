@@ -12,21 +12,7 @@
       Артикул: {{ item.productId }}
     </span>
 
-    <div class="product__counter form__counter">
-      <button type="button" aria-label="Убрать один товар" @click.prevent="decAmount" :disabled="amount === 1">
-        <svg width="10" height="10" fill="currentColor">
-          <use xlink:href="#icon-minus"></use>
-        </svg>
-      </button>
-
-      <input type="text" v-model.number="amount" name="count">
-
-      <button type="button" aria-label="Добавить один товар" @click.prevent="incAmount">
-        <svg width="10" height="10" fill="currentColor">
-          <use xlink:href="#icon-plus"></use>
-        </svg>
-      </button>
-    </div>
+    <SetAmount v-model.number="amount" />
 
     <b class="product__price">
       {{ item.product.price | numberFormat }} ₽
@@ -43,9 +29,11 @@
 <script>
 import { mapMutations } from 'vuex';
 import numberFormat from '@/helpers/numderFormat';
+import SetAmount from '@/components/SetAmount';
 
 export default {
   props: ['item'],
+  components: {SetAmount},
   filters: {numberFormat},
   computed: {
     amount: {
@@ -59,15 +47,6 @@ export default {
   },
   methods: {
     ...mapMutations({delItem: 'delProductFromCart'}),
-
-    decAmount() {
-      if (this.amount > 1) {
-        this.amount--;
-      }
-    },
-    incAmount() {
-      this.amount++;
-    }
   }
 };
 </script>

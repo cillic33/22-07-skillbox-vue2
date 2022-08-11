@@ -185,7 +185,6 @@
 <script>
 import products from '@/data/products';
 import categories from '@/data/categories';
-import gotoPage from '@/helpers/gotoPage';
 import numberFormat from '@/helpers/numderFormat';
 import SetAmount from '@/components/SetAmount';
 
@@ -209,9 +208,8 @@ export default {
     numberFormat,
   },
   methods: {
-    gotoPage,
     addToCart() {
-      this.$store.commit('addProductsToCart', {productId: this.product.id, amount: this.amount});
+      this.$store.commit('addProductToCart', {productId: this.product.id, amount: this.amount});
     }
   }
 };

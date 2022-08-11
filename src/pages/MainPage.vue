@@ -11,7 +11,7 @@
 
     <div class="content__catalog">
 
-      <productFilter :page.sync="page" :price-from.sync="priceFrom" :price-to.sync="priceTo" :category-id.sync="categoryId" :color-id.sync="colorId" />
+      <ProductFilter :page.sync="page" :price-from.sync="priceFrom" :price-to.sync="priceTo" :category-id.sync="categoryId" :color-id.sync="colorId" />
 
       <section class="catalog">
 
@@ -29,10 +29,10 @@
 import products from "@/data/products";
 import ProductList from "@/components/ProductList.vue";
 import BasePagination from '@/components/BasePagination';
-import productFilter from '@/components/ProductFilter';
+import ProductFilter from '@/components/ProductFilter';
 
 export default {
-  components: {ProductList, BasePagination, productFilter},
+  components: {ProductList, BasePagination, ProductFilter},
   data() {
     return {
       page: 1,
