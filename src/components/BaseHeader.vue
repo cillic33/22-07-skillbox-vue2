@@ -7,24 +7,20 @@
         <img src="img/svg/logo-tech.svg" alt="Логотип интернет магазина Технозавррр" width="190" height="33">
       </router-link>
 
-      <a class="header__tel" href="tel:8 800 600 90 09">
+      <a class="header__tel" href="tel:88006009009">
         8 800 600 90 09
       </a>
 
-      <router-link class="header__cart" aria-label="Корзина с товарами" :to="{name: 'cart'}">
-        <svg width="30" height="21" fill="currentColor">
-          <use xlink:href="#icon-cart"></use>
-        </svg>
-        <span class="header__count" aria-label="Количество товаров">{{ $store.state.cartProducts.length }}</span>
-      </router-link>
+      <CartIndicator/>
     </div>
   </header>
 </template>
 
 <script>
+import CartIndicator from '@/components/CartIndicator';
 
 export default {
-
+  components: {CartIndicator}
 };
 </script>
 
