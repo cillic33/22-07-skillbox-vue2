@@ -3,16 +3,25 @@
     <svg width="30" height="21" fill="currentColor">
       <use xlink:href="#icon-cart"></use>
     </svg>
-    <span class="header__count" aria-label="Количество товаров">{{ $store.state.cartProducts.length }}</span>
+    <span v-if="isCartProductsLoading || isCartProductAdding || isCartProductAmountUpdating || isCartProductDeleting" class="header__count">
+      <span class="loader loader__cart-indicator"></span>
+    </span>
+    <span v-else class="header__count" aria-label="Количество товаров">
+      {{ cartProductsCount }}
+    </span>
   </router-link>
 </template>
 
 <script>
-export default {
+import { mapGetters } from 'vuex';
 
+export default {
+  computed: {
+    ...mapGetters(['isCartProductsLoading', 'cartProductsCount', 'isCartProductAdding', 'isCartProductAmountUpdating', 'isCartProductDeleting']),
+  }
 };
 </script>
 
-<style scoped>
+<style scoped lang="stylus">
 
 </style>

@@ -1,5 +1,6 @@
 <template>
   <main class="content container">
+
     <div class="content__top content__top--catalog">
       <h1 class="content__title">
         Каталог
@@ -11,28 +12,70 @@
 
     <div class="content__catalog">
 
-      <ProductFilter :page.sync="page" :price-from.sync="priceFrom" :price-to.sync="priceTo" :category-id.sync="categoryId" :color-id.sync="colorId" />
+      <ProductFilter :page.sync="page" :price-from.sync="priceFrom" :price-to.sync="priceTo"
+                     :category-id.sync="categoryId" :color-id.sync="colorId"/>
 
       <section class="catalog">
 
-        <ProductList :products="products" />
+        <transition name="items-fade" mode="out-in">
 
-        <BasePagination :page.sync="page" :products-count="productsCount" :per-page="productsPerPage" />
+          <!-- Preloader -->
+          <div v-if="isProductsLoading" :key="'isProductsLoading'"
+               class="content__catalog__div-is-products-loading">
+            <div class="contener_general">
+              <div class="contener_mixte">
+                <div class="ballcolor ball_1">&nbsp;</div>
+              </div>
+              <div class="contener_mixte">
+                <div class="ballcolor ball_2">&nbsp;</div>
+              </div>
+              <div class="contener_mixte">
+                <div class="ballcolor ball_3">&nbsp;</div>
+              </div>
+              <div class="contener_mixte">
+                <div class="ballcolor ball_4">&nbsp;</div>
+              </div>
+            </div>
+            <div>Товары загружаются...</div>
+          </div>
+
+          <div v-else-if="isProductsLoadingFail" :key="'isProductsLoadingFail'"
+               class="message__error content__catalog__div-load-products-error">
+            Произошла ошибка при загрузке товаров<br><br>
+            <button class="btn" @click.prevent="loadProducts()">Попробовать еще раз</button>
+          </div>
+
+          <div v-else-if="productsCount === 0" :key="'isProductsNotFound'">По вашему запросу ничего
+            не найдено
+          </div>
+
+          <ProductList v-else-if="productsData" :products="products" :key="'productsData'"/>
+
+        </transition>
+
+        <BasePagination :page.sync="page" :products-count="productsCount"
+                        :per-page="productsPerPage"/>
 
       </section>
-    </div>
-  </main>
 
+    </div>
+
+  </main>
 </template>
 
 <script>
-import products from "@/data/products";
-import ProductList from "@/components/ProductList.vue";
+import ProductList from '@/components/ProductList.vue';
 import BasePagination from '@/components/BasePagination';
 import ProductFilter from '@/components/ProductFilter';
+import axios from 'axios';
+import { API_BASE_URL } from '@/config';
 
 export default {
-  components: {ProductList, BasePagination, ProductFilter},
+  components: {
+    ProductList,
+    BasePagination,
+    ProductFilter
+  },
   data() {
     return {
       page: 1,
@@ -41,38 +84,101 @@ export default {
       priceTo: 0,
       categoryId: 0,
       colorId: 0,
-    }
+
+      productsData: null,
+      isProductsLoading: false,
+      isProductsLoadingFail: false,
+    };
   },
   computed: {
     products() {
-      const offset = (this.page - 1) * this.productsPerPage;
-      return this.productsFiltered.slice(offset, offset + this.productsPerPage);
+      return this.productsData
+        ? this.productsData.items.map(item => {
+          return {
+            ...item,
+            image: item.image.file.url
+          };
+        })
+        : [];
     },
     productsCount() {
-      return this.productsFiltered.length;
+      return this.productsData
+        ? this.productsData.pagination.total
+        : 0;
     },
-    productsFiltered() {
-      let productsFiltered = products;
+  },
+  methods: {
+    loadProducts() {
+      this.isProductsLoading = true;
+      this.isProductsLoadingFail = false;
 
-      if (this.priceFrom > 0) {
-        productsFiltered = productsFiltered.filter(product => product.price >= this.priceFrom);
-      }
-      if (this.priceTo > 0) {
-        productsFiltered = productsFiltered.filter(product => product.price <= this.priceTo);
-      }
-      if (this.categoryId !== 0) {
-        productsFiltered = productsFiltered.filter(product => product.categoryId === this.categoryId);
-      }
-      if (this.colorId > 0) {
-        productsFiltered = productsFiltered.filter(product => product.colors.includes(this.colorId));
-      }
+      clearTimeout(this.loadProductsTimer);
 
-      return productsFiltered;
+      this.loadProductsTimer = setTimeout(() => {
+        return axios
+          .get(API_BASE_URL + '/api/products', {
+            params: {
+              page: this.page,
+              limit: this.productsPerPage,
+              minPrice: this.priceFrom,
+              maxPrice: this.priceTo,
+              categoryId: this.categoryId,
+              colorId: this.colorId,
+            }
+          })
+          .then(response => this.productsData = response.data)
+          .catch(error => {
+            this.isProductsLoadingFail = true;
+            console.log(error);
+          })
+          .then(() => this.isProductsLoading = false);
+      }, 1000);
+
+    }
+  },
+  watch: {
+    page() {
+      this.loadProducts();
     },
+    priceFrom() {
+      this.loadProducts();
+    },
+    priceTo() {
+      this.loadProducts();
+    },
+    categoryId() {
+      this.loadProducts();
+    },
+    colorId() {
+      this.loadProducts();
+    }
+  },
+  created() {
+    this.loadProducts();
+    this.categoryId = this.$route.params.categoryId ? this.$route.params.categoryId : 0;
   }
 };
 </script>
 
-<style scoped>
+<style scoped lang="stylus">
+.catalog
+  position relative
 
+  &__list
+    grid-gap 24px
+
+.content
+  &__catalog
+    &__div
+      &-is-products-loading
+        position absolute
+        top 0
+        width 100%
+        display flex
+        flex-direction column
+        align-items center
+        gap 20px
+
+      &-load-products-error
+        position absolute
 </style>

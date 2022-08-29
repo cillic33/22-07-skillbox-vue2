@@ -1,8 +1,10 @@
 <template>
   <aside class="filter">
+
     <h2 class="filter__title">Фильтры</h2>
 
     <form class="filter__form form" action="#" method="get">
+      <!-- Поля Цена -->
       <fieldset class="form__block">
         <legend class="form__legend">Цена</legend>
         <label class="form__label form__label--price">
@@ -15,113 +17,99 @@
         </label>
       </fieldset>
 
+      <!-- Поле Категория -->
       <fieldset class="form__block">
         <legend class="form__legend">Категория</legend>
-        <label class="form__label form__label--select">
-          <select class="form__select" type="text" name="category" v-model.number="currentCategoryId">
+        <div v-if="isCategoriesDataLoading" class="loader loader__filter-field"></div>
+        <div v-else-if="isCategoriesDataLoadingFail">
+          <div class="message__error">Ошибка загрузки категорий</div>
+          <button type="button" class="btn" @click.prevent="loadCategoriesData()">
+            Попробовать еще раз
+          </button>
+        </div>
+        <label v-else class="form__label form__label--select">
+          <select class="form__select" type="text" name="category"
+                  v-model.number="currentCategoryId">
             <option value="0">Все категории</option>
-            <option :value="category.id" v-for="category in categories" :key="category.id">{{ category.title }}</option>
+            <option :value="category.id" v-for="category in categories" :key="category.id">
+              {{ category.title }}
+            </option>
           </select>
         </label>
       </fieldset>
 
+      <!-- Поле Цвет -->
       <fieldset class="form__block">
         <legend class="form__legend">Цвет</legend>
-        <ul class="colors">
+        <div v-if="isCategoriesDataLoading" class="loader loader__filter-field"></div>
+        <div v-else-if="isColorsDataLoadingFail">
+          <div class="message__error">Ошибка загрузки цветов</div>
+          <button type="button" class="btn" @click.prevent="loadColorsData()">Попробовать еще раз
+          </button>
+        </div>
+        <ul v-else class="colors">
+          <li class="colors__item">
+            <label class="colors__label">
+              <input class="colors__radio sr-only" type="radio" name="color"
+                     v-model.number="currentColorId" :value="0">
+              <span class="colors__value colors__value_all" title="Все">Все</span>
+            </label>
+          </li>
           <li class="colors__item" v-for="color in colors" :key="color.id">
             <label class="colors__label">
-              <input class="colors__radio sr-only" type="radio" name="color" v-model.number="currentColorId" :value="color.id">
-              <span class="colors__value colors__value_all" v-if="color.id === 0">Все</span>
-              <span class="colors__value" v-else :style="{backgroundColor: color.value}"></span>
+              <input class="colors__radio sr-only" type="radio" name="color"
+                     v-model.number="currentColorId" :value="color.id">
+              <span class="colors__value" :style="{backgroundColor: color.code}"
+                    :title="color.title"></span>
             </label>
           </li>
         </ul>
       </fieldset>
 
-      <!--<fieldset class="form__block">
-        <legend class="form__legend">Объемб в ГБ</legend>
-        <ul class="check-list">
-          <li class="check-list__item">
-            <label class="check-list__label">
-              <input class="check-list__check sr-only" type="checkbox" name="volume" value="8" checked="">
-              <span class="check-list__desc">
-                    8
-                    <span>(313)</span>
-                  </span>
-            </label>
-          </li>
-          <li class="check-list__item">
-            <label class="check-list__label">
-              <input class="check-list__check sr-only" type="checkbox" name="volume" value="16">
-              <span class="check-list__desc">
-                    16
-                    <span>(461)</span>
-                  </span>
-            </label>
-          </li>
-          <li class="check-list__item">
-            <label class="check-list__label">
-              <input class="check-list__check sr-only" type="checkbox" name="volume" value="32">
-              <span class="check-list__desc">
-                    32
-                    <span>(313)</span>
-                  </span>
-            </label>
-          </li>
-          <li class="check-list__item">
-            <label class="check-list__label">
-              <input class="check-list__check sr-only" type="checkbox" name="volume" value="64">
-              <span class="check-list__desc">
-                    64
-                    <span>(313)</span>
-                  </span>
-            </label>
-          </li>
-          <li class="check-list__item">
-            <label class="check-list__label">
-              <input class="check-list__check sr-only" type="checkbox" name="volume" value="128">
-              <span class="check-list__desc">
-                    128
-                    <span>(313)</span>
-                  </span>
-            </label>
-          </li>
-          <li class="check-list__item">
-            <label class="check-list__label">
-              <input class="check-list__check sr-only" type="checkbox" name="volume" value="264">
-              <span class="check-list__desc">
-                    264
-                    <span>(313)</span>
-                  </span>
-            </label>
-          </li>
-        </ul>
-      </fieldset>-->
-
+      <!-- Кнопки -->
       <button class="filter__submit button button--primery" type="submit" @click.prevent="submit">
         Применить
       </button>
-      <button class="filter__reset button button--second" type="button" @click.prevent="reset">
+      <button class="filter__reset button button--second" type="reset" @click.prevent="reset">
         Сбросить
       </button>
     </form>
+
   </aside>
 </template>
 
 <script>
-import categories from '@/data/categories';
-import colors from '@/data/colors';
+import axios from 'axios';
+import { API_BASE_URL } from '@/config';
 
 export default {
   props: ['page', 'priceFrom', 'priceTo', 'categoryId', 'colorId'],
   data() {
     return {
-      categories,
-      colors,
       currentPriceFrom: 0,
       currentPriceTo: 0,
       currentCategoryId: 0,
       currentColorId: 0,
+
+      categoriesData: null,
+      isCategoriesDataLoading: false,
+      isCategoriesDataLoadingFail: false,
+
+      colorsData: null,
+      isColorsDataLoading: false,
+      isColorsDataLoadingFail: false,
+    };
+  },
+  computed: {
+    categories() {
+      return this.categoriesData
+        ? this.categoriesData.items
+        : [];
+    },
+    colors() {
+      return this.colorsData
+        ? this.colorsData.items
+        : [];
     }
   },
   watch: {
@@ -152,7 +140,46 @@ export default {
       this.$emit('update:categoryId', 0);
       this.$emit('update:colorId', 0);
       this.$emit('update:page', 1);
+      this.currentPriceFrom = 0;
+      this.currentPriceTo = 0;
+      this.currentCategoryId = 0;
+      this.currentColorId = 0;
+    },
+    loadCategoriesData() {
+      this.isCategoriesDataLoading = true;
+      this.isCategoriesDataLoadingFail = false;
+
+      setTimeout(() => {
+        return axios
+          .get(API_BASE_URL + '/api/productCategories')
+          .then(response => this.categoriesData = response.data)
+          .catch(error => {
+            this.isCategoriesDataLoadingFail = true;
+            console.log(error);
+          })
+          .then(() => this.isCategoriesDataLoading = false);
+      }, 1000);
+    },
+    loadColorsData() {
+      this.isColorsDataLoading = true;
+      this.isColorsDataLoadingFail = false;
+
+      setTimeout(() => {
+        return axios
+          .get(API_BASE_URL + '/api/colors')
+          .then(response => this.colorsData = response.data)
+          .catch(error => {
+            this.isColorsDataLoadingFail = true;
+            console.log(error);
+          })
+          .then(() => this.isColorsDataLoading = false);
+      }, 1000);
     }
+  },
+  created() {
+    this.loadCategoriesData();
+    this.loadColorsData();
+    this.currentCategoryId = this.$route.params.categoryId ? this.$route.params.categoryId : 0;
   }
 };
 </script>
@@ -163,6 +190,7 @@ export default {
     display flex
     align-items center
     justify-content center
+
     &_all
       font-size 10px
 </style>
