@@ -149,31 +149,27 @@ export default {
       this.isCategoriesDataLoading = true;
       this.isCategoriesDataLoadingFail = false;
 
-      setTimeout(() => {
-        return axios
-          .get(API_BASE_URL + '/api/productCategories')
-          .then(response => this.categoriesData = response.data)
-          .catch(error => {
-            this.isCategoriesDataLoadingFail = true;
-            console.log(error);
-          })
-          .then(() => this.isCategoriesDataLoading = false);
-      }, 1000);
+      return axios
+        .get(API_BASE_URL + '/api/productCategories')
+        .then(response => this.categoriesData = response.data)
+        .catch(error => {
+          this.isCategoriesDataLoadingFail = true;
+          console.log(error);
+        })
+        .then(() => this.isCategoriesDataLoading = false);
     },
     loadColorsData() {
       this.isColorsDataLoading = true;
       this.isColorsDataLoadingFail = false;
 
-      setTimeout(() => {
-        return axios
-          .get(API_BASE_URL + '/api/colors')
-          .then(response => this.colorsData = response.data)
-          .catch(error => {
-            this.isColorsDataLoadingFail = true;
-            console.log(error);
-          })
-          .then(() => this.isColorsDataLoading = false);
-      }, 1000);
+      return axios
+        .get(API_BASE_URL + '/api/colors')
+        .then(response => this.colorsData = response.data)
+        .catch(error => {
+          this.isColorsDataLoadingFail = true;
+          console.log(error);
+        })
+        .then(() => this.isColorsDataLoading = false);
     }
   },
   created() {

@@ -144,9 +144,9 @@ export default {
 
     /* Preloader для блока оформления в корзине */
     &-order
-      width 40px
-      height 40px
-      border 5px solid #aaa
+      width 20px
+      height 20px
+      border 3px solid #aaa
       border-bottom-color #fff
 
   /* Preloader для загрузки полей фильтра */

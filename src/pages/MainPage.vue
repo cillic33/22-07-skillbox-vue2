@@ -132,7 +132,7 @@ export default {
             console.log(error);
           })
           .then(() => this.isProductsLoading = false);
-      }, 1000);
+      }, 0);
 
     }
   },

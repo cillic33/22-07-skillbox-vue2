@@ -79,15 +79,13 @@
                 Мы&nbsp;посчитаем стоимость доставки на&nbsp;следующем этапе
               </p>
 
-              <div v-if="isCartProductAmountUpdating || isCartProductDeleting" class="loader__cart-order-wrap">
-                <div class="loader loader__cart-order"></div>
-              </div>
-
-              <div v-else>
+              <div>
                 <p class="cart__price">
-                  Итого: <span>{{ cartProductsAmountPrice | numberFormat }} ₽</span>
+                  Итого:
+                  <span v-if="isCartProductAmountUpdating || isCartProductDeleting" class="loader loader__cart-order"></span>
+                  <span v-else>{{ cartProductsAmountPrice | numberFormat }} ₽</span>
                 </p>
-                <button class="cart__button button button--primery" type="submit">
+                <button class="cart__button button button--primery" type="submit" :disabled="isCartProductAmountUpdating || isCartProductDeleting">
                   Оформить заказ
                 </button>
               </div>
@@ -131,6 +129,6 @@ export default {
     flex-direction column
     gap 20px
 
-.loader__cart-order-wrap
-  text-align center
+  &__price
+    height 50px
 </style>

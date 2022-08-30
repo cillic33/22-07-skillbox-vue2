@@ -76,9 +76,18 @@
                   <ProductColors :product="product"/>
                 </fieldset>
 
-                <div v-if="isCartProductAddingFail">
-                  Произошла ошибка добавления товара в корзину.
-                  Попробуйте еще раз.<br><br>
+                <div class="item__row">
+                  <SetAmount v-model.number="amount"/>
+                  <button class="button button--primery" type="submit" :disabled="isCartProductAdding">
+                    В корзину
+                  </button>
+                </div>
+
+                <br>
+
+                <div v-if="isCartProductAdding">
+                  <span class="loader loader__product-adding"></span>
+                  Товар добавляется...
                 </div>
 
                 <div v-if="isCartProductAddingSuccess">
@@ -86,19 +95,11 @@
                   <router-link :to="{name: 'cart'}" tag="button" class="btn">
                     Посмотреть
                   </router-link>
-                  <br><br>
                 </div>
 
-                <div v-if="isCartProductAdding">
-                  <span class="loader loader__product-adding"></span>
-                  Товар добавляется...
-                </div>
-
-                <div v-else class="item__row">
-                  <SetAmount v-model.number="amount"/>
-                  <button class="button button--primery" type="submit">
-                    В корзину
-                  </button>
+                <div v-if="isCartProductAddingFail" class="message__error">
+                  Произошла ошибка добавления товара в корзину.
+                  Попробуйте еще раз.
                 </div>
 
               </form>
@@ -233,16 +234,14 @@ export default {
       this.isLoadingProductData = true;
       this.isLoadingProductDataFail = false;
 
-      setTimeout(() => {
-        return axios
-          .get(API_BASE_URL + '/api/products/' + this.$route.params.id)
-          .then(response => this.productData = response.data)
-          .catch(error => {
-            this.isLoadingProductDataFail = true;
-            console.log(error);
-          })
-          .then(() => this.isLoadingProductData = false);
-      }, 1000);
+      return axios
+        .get(API_BASE_URL + '/api/products/' + this.$route.params.id)
+        .then(response => this.productData = response.data)
+        .catch(error => {
+          this.isLoadingProductDataFail = true;
+          console.log(error);
+        })
+        .then(() => this.isLoadingProductData = false);
     }
   },
   watch: {
@@ -281,4 +280,7 @@ export default {
     img
       max-width 400px
       max-height 400px
+
+.item__form
+  height 400px
 </style>
