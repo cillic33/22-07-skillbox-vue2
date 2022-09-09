@@ -23,34 +23,19 @@
       <transition name="items-fade" mode="out-in">
 
         <!-- Preloader -->
-        <div v-if="isCartProductsLoading" class="cart__preloader" :key="'isCartProductsLoading'">
-          <div class="contener_general">
-            <div class="contener_mixte">
-              <div class="ballcolor ball_1">&nbsp;</div>
-            </div>
-            <div class="contener_mixte">
-              <div class="ballcolor ball_2">&nbsp;</div>
-            </div>
-            <div class="contener_mixte">
-              <div class="ballcolor ball_3">&nbsp;</div>
-            </div>
-            <div class="contener_mixte">
-              <div class="ballcolor ball_4">&nbsp;</div>
-            </div>
-          </div>
-          <div>Корзина загружается...</div>
-        </div>
+        <PreloaderBall v-if="isCartProductsLoading"
+                       message="Корзина загружается..."></PreloaderBall>
 
         <!-- Ошибка загрузки товаров -->
         <div v-else-if="isCartProductsLoadingFail" class="message__error"
-             :key="'isCartProductsLoadingFail'">
+             key="isCartProductsLoadingFail">
           Произошла ошибка загрузки товаров
         </div>
 
         <!-- Основной контент корзины -->
-        <div v-else :key="'cartProductsContent'">
+        <div v-else key="cartProductsContent">
           <span class="content__info">
-            {{ cartProductsCount }} товара<br><br>
+            Товаров: {{ cartProductsCount }}<br><br>
           </span>
 
           <form class="cart__form form" action="#" method="POST">
@@ -67,7 +52,8 @@
                 </div>
                 <div v-if="cartProductsCount === 0">
                   Корзина пуста<br><br>
-                  <router-link :to="{name: 'main'}" tag="button" class="btn">Перейти в каталог</router-link>
+                  <router-link :to="{name: 'main'}" tag="button" class="btn">Перейти в каталог
+                  </router-link>
                 </div>
                 <CartItem v-for="item in cartProducts" :key="item.productId" :item="item"/>
               </ul>
@@ -82,12 +68,16 @@
               <div>
                 <p class="cart__price">
                   Итого:
-                  <span v-if="isCartProductAmountUpdating || isCartProductDeleting" class="loader loader__cart-order"></span>
+                  <span v-if="isCartProductAmountUpdating || isCartProductDeleting"
+                        class="loader loader__cart-order"></span>
                   <span v-else>{{ cartProductsAmountPrice | numberFormat }} ₽</span>
                 </p>
-                <button class="cart__button button button--primery" type="submit" :disabled="isCartProductAmountUpdating || isCartProductDeleting">
+                <router-link tag="button" :to="{name: 'order'}"
+                             class="cart__button button button--primery" type="submit"
+                             :disabled="isCartProductAmountUpdating || isCartProductDeleting"
+                             v-if="cartProductsCount">
                   Оформить заказ
-                </button>
+                </router-link>
               </div>
 
             </div>
@@ -105,10 +95,14 @@
 import numberFormat from '@/helpers/numderFormat';
 import CartItem from '@/components/CartItem';
 import { mapGetters, mapMutations } from 'vuex';
+import PreloaderBall from '@/components/PreloaderBall';
 
 export default {
   filters: { numberFormat },
-  components: { CartItem },
+  components: {
+    CartItem,
+    PreloaderBall
+  },
   computed: {
     ...mapGetters(['cartProducts', 'cartProductsCount', 'cartProductsAmountPrice', 'isCartProductsLoading', 'isCartProductsLoadingFail', 'isCartProductAmountUpdating', 'isCartProductAmountUpdatingFail', 'isCartProductDeleting', 'isCartProductDeletingFail'])
   },

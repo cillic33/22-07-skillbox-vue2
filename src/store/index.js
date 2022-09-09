@@ -10,7 +10,7 @@ const store = new Vuex.Store({
     cartProducts: [],
 
     userAccessKey: null,
-    cartProductsData: null,
+    cartProductsData: [],
     isCartProductsLoading: false,
     isCartProductsLoadingFail: false,
 
@@ -25,9 +25,24 @@ const store = new Vuex.Store({
     isCartProductDeletingFail: false,
 
     editingProductId: null,
+
+    orderInfo: {},
+    isOrderInfoLoading: false,
+    isOrderInfoLoadingFail: false,
+    orderInfoLoadingFail: '',
   },
   mutations: {
-    updateCartProductAmount(state, {productId, amount}) {
+    updateOrderInfo(state, payload) {
+      state.orderInfo = payload;
+    },
+    resetCart(state) {
+      state.cartProducts = [];
+      state.cartProductsData = [];
+    },
+    updateCartProductAmount(state, {
+      productId,
+      amount
+    }) {
       const product = state.cartProducts.find(p => p.productId === productId);
       product.amount = amount;
     },
@@ -114,7 +129,20 @@ const store = new Vuex.Store({
 
     editingProductId(state) {
       return state.editingProductId;
-    }
+    },
+
+    orderInfo(state) {
+      return state.orderInfo ? state.orderInfo : {};
+    },
+    isOrderInfoLoading(state) {
+      return state.isOrderInfoLoading;
+    },
+    isOrderInfoLoadingFail(state) {
+      return state.isOrderInfoLoadingFail;
+    },
+    orderInfoLoadingFail(state) {
+      return state.orderInfoLoadingFail;
+    },
   },
   actions: {
     loadCartProductsData(context) {
@@ -139,11 +167,14 @@ const store = new Vuex.Store({
           context.state.isCartProductsLoadingFail = true;
           console.log(error);
         })
-        .then(() => {
+        .finally(() => {
           context.state.isCartProductsLoading = false;
         });
     },
-    addProductToCart(context, {productId, quantity}) {
+    addProductToCart(context, {
+      productId,
+      quantity
+    }) {
       context.state.isCartProductAdding = true;
       context.state.isCartProductAddingFail = false;
       context.state.isCartProductAddingSuccess = false;
@@ -165,13 +196,19 @@ const store = new Vuex.Store({
           context.state.isCartProductAddingFail = true;
           console.log(error);
         })
-        .then(() => {
+        .finally(() => {
           context.state.isCartProductAdding = false;
           context.state.isCartProductAddingSuccess = (!context.state.isCartProductAddingFail);
         });
     },
-    updateCartProductAmount(context, {productId, amount}) {
-      context.commit('updateCartProductAmount', {productId, amount});
+    updateCartProductAmount(context, {
+      productId,
+      amount
+    }) {
+      context.commit('updateCartProductAmount', {
+        productId,
+        amount
+      });
 
       if (amount < 1) {
         return;
@@ -198,7 +235,7 @@ const store = new Vuex.Store({
           context.state.isCartProductAmountUpdatingFail = true;
           console.log(error);
         })
-        .then(() => {
+        .finally(() => {
           context.state.isCartProductAmountUpdating = false;
         });
     },
@@ -226,7 +263,29 @@ const store = new Vuex.Store({
           context.state.isCartProductDeletingFail = true;
           console.log(error);
         })
-        .then(() => context.state.isCartProductDeleting = false);
+        .finally(() => context.state.isCartProductDeleting = false);
+    },
+    loadOrderInfo(context, orderId) {
+      context.state.isOrderInfoLoading = true;
+      context.state.isOrderInfoLoadingFail = false;
+      context.state.orderInfoLoadingFail = '';
+
+      return axios
+        .get(API_BASE_URL + '/api/orders/' + orderId, {
+          params: {
+            userAccessKey: context.state.userAccessKey,
+          }
+        })
+        .then(response => {
+          context.commit('updateOrderInfo', response.data);
+        })
+        .catch(error => {
+          context.state.isOrderInfoLoadingFail = true;
+          context.state.orderInfoLoadingFail = error.response.data.error.message;
+        })
+        .finally(() => {
+          context.state.isOrderInfoLoading = false;
+        });
     },
   }
 });

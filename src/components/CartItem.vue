@@ -2,7 +2,7 @@
   <li class="cart__item product">
 
     <router-link class="product__pic" :to="{name: 'product', params: {id: item.productId}}">
-      <img :src="item.product.image" width="120" height="120" :alt="item.product.title">
+      <img :src="item.product.image" width="120" height="120" :alt="item.product.title" class="cart__item-img">
     </router-link>
 
     <h3 class="product__title">
@@ -79,13 +79,18 @@ export default {
 button
   cursor pointer
 
-.cart__item__set-amount
-  &__spinner
-    position absolute
-    display flex
-    align-items center
-    justify-content center
-    width 120px
-    height 50px
-    background #eeeeeeee
+.cart__item
+  &__set-amount
+    &__spinner
+      position absolute
+      display flex
+      align-items center
+      justify-content center
+      width 120px
+      height 50px
+      background #eeeeeeee
+
+  &-img
+    max-width 90%
+    max-height 120px
 </style>

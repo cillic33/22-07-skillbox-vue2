@@ -19,37 +19,19 @@
 
         <transition name="items-fade" mode="out-in">
 
-          <!-- Preloader -->
-          <div v-if="isProductsLoading" :key="'isProductsLoading'"
-               class="content__catalog__div-is-products-loading">
-            <div class="contener_general">
-              <div class="contener_mixte">
-                <div class="ballcolor ball_1">&nbsp;</div>
-              </div>
-              <div class="contener_mixte">
-                <div class="ballcolor ball_2">&nbsp;</div>
-              </div>
-              <div class="contener_mixte">
-                <div class="ballcolor ball_3">&nbsp;</div>
-              </div>
-              <div class="contener_mixte">
-                <div class="ballcolor ball_4">&nbsp;</div>
-              </div>
-            </div>
-            <div>Товары загружаются...</div>
-          </div>
+          <PreloaderBall v-if="isProductsLoading" message="Товары загружаются..."></PreloaderBall>
 
-          <div v-else-if="isProductsLoadingFail" :key="'isProductsLoadingFail'"
+          <div v-else-if="isProductsLoadingFail" key="isProductsLoadingFail"
                class="message__error content__catalog__div-load-products-error">
             Произошла ошибка при загрузке товаров<br><br>
             <button class="btn" @click.prevent="loadProducts()">Попробовать еще раз</button>
           </div>
 
-          <div v-else-if="productsCount === 0" :key="'isProductsNotFound'">По вашему запросу ничего
+          <div v-else-if="productsCount === 0" key="isProductsNotFound">По вашему запросу ничего
             не найдено
           </div>
 
-          <ProductList v-else-if="productsData" :products="products" :key="'productsData'"/>
+          <ProductList v-else-if="productsData" :products="products" key="productsData"/>
 
         </transition>
 
@@ -69,12 +51,14 @@ import BasePagination from '@/components/BasePagination';
 import ProductFilter from '@/components/ProductFilter';
 import axios from 'axios';
 import { API_BASE_URL } from '@/config';
+import PreloaderBall from '@/components/PreloaderBall';
 
 export default {
   components: {
     ProductList,
     BasePagination,
-    ProductFilter
+    ProductFilter,
+    PreloaderBall
   },
   data() {
     return {
@@ -133,7 +117,6 @@ export default {
           })
           .then(() => this.isProductsLoading = false);
       }, 0);
-
     }
   },
   watch: {

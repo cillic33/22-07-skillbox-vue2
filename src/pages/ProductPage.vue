@@ -3,34 +3,17 @@
 
     <transition name="items-fade" mode="out-in">
 
-      <!-- Preloader -->
-      <div v-if="isLoadingProductData" class="product__informer" :key="'isLoadingProductData'">
-        <div class="contener_general">
-          <div class="contener_mixte">
-            <div class="ballcolor ball_1">&nbsp;</div>
-          </div>
-          <div class="contener_mixte">
-            <div class="ballcolor ball_2">&nbsp;</div>
-          </div>
-          <div class="contener_mixte">
-            <div class="ballcolor ball_3">&nbsp;</div>
-          </div>
-          <div class="contener_mixte">
-            <div class="ballcolor ball_4">&nbsp;</div>
-          </div>
-        </div>
-        <div>Товар загружается...</div>
-      </div>
+      <PreloaderBall v-if="isLoadingProductData" message="Товар загружается..."></PreloaderBall>
 
       <div v-else-if="isLoadingProductDataFail" class="product__informer"
-           :key="'isLoadingProductDataFail'">
+           key="isLoadingProductDataFail">
         <div>Произошла ошибка загрузки товара</div>
         <div>
           <button @click.prevent="loadProductData" class="btn">Попробовать еще</button>
         </div>
       </div>
 
-      <div v-else :key="'productData'">
+      <div v-else key="productData">
         <div class="content__top">
           <ul class="breadcrumbs">
             <li class="breadcrumbs__item">
@@ -78,7 +61,8 @@
 
                 <div class="item__row">
                   <SetAmount v-model.number="amount"/>
-                  <button class="button button--primery" type="submit" :disabled="isCartProductAdding">
+                  <button class="button button--primery" type="submit"
+                          :disabled="isCartProductAdding">
                     В корзину
                   </button>
                 </div>
@@ -186,11 +170,13 @@ import SetAmount from '@/components/SetAmount';
 import ProductColors from '@/components/ProductColors';
 import { API_BASE_URL } from '@/config';
 import { mapActions, mapGetters, mapMutations } from 'vuex';
+import PreloaderBall from '@/components/PreloaderBall';
 
 export default {
   components: {
     SetAmount,
-    ProductColors
+    ProductColors,
+    PreloaderBall
   },
   data() {
     return {

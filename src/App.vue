@@ -14,7 +14,10 @@ import BaseFooter from '@/components/BaseFooter';
 import { mapMutations, mapActions } from 'vuex';
 
 export default {
-  components: {BaseHeader, BaseFooter},
+  components: {
+    BaseHeader,
+    BaseFooter
+  },
   methods: {
     ...mapMutations(['updateUserAccessKey']),
     ...mapActions(['loadCartProductsData']),
@@ -26,7 +29,7 @@ export default {
     }
     this.loadCartProductsData();
   }
-}
+};
 </script>
 
 <style lang="stylus">
@@ -57,11 +60,11 @@ export default {
   &-enter-active,
   &-leave-active
     transition opacity 0.5s ease, transform 0.5s ease
+
   &-enter,
   &-leave-to
     opacity 0
     transform translateY(10px)
-
 
 
 /* Preloader для загрузки товаров */
@@ -70,36 +73,45 @@ export default {
     animation animball_two 1s infinite
     width 44px
     height 44px
+    margin 0 auto
+
   &_mixte
     width 44px
     height 44px
     position absolute
+
 .ballcolor
   width 20px
   height 20px
   border-radius 50%
+
 .ball_1,
 .ball_2,
 .ball_3,
 .ball_4
   position absolute
   animation animball_one 1s infinite ease
+
 .ball_1
   background-color #cb2025
   top 0
   left 0
+
 .ball_2
   background-color #f8b334
   top 0
   left 24px
+
 .ball_3
   background-color #00a096
   top 24px
   left 0
+
 .ball_4
   background-color #97bf0d
   top 24px
   left 24px
+
 @keyframes animball_one
   0%
     position absolute
@@ -110,6 +122,7 @@ export default {
     opacity 0.5
   100%
     position absolute
+
 @keyframes animball_two
   0%
     transform rotate(0deg) scale(1)
@@ -117,7 +130,6 @@ export default {
     transform rotate(360deg) scale(1.3)
   100%
     transform rotate(720deg) scale(1)
-
 
 
 .loader
@@ -129,6 +141,7 @@ export default {
 
   &__cart
     /* Preloader для корзины в шапке */
+
     &-indicator
       width 10px
       height 10px
@@ -136,6 +149,7 @@ export default {
       border-bottom-color #000000
 
     /* Preloader для товаров в корзине */
+
     &-item
       width 20px
       height 20px
@@ -143,6 +157,7 @@ export default {
       border-bottom-color #666666
 
     /* Preloader для блока оформления в корзине */
+
     &-order
       width 20px
       height 20px
@@ -150,6 +165,7 @@ export default {
       border-bottom-color #fff
 
   /* Preloader для загрузки полей фильтра */
+
   &__filter-field
     width 30px
     height 30px
@@ -157,6 +173,7 @@ export default {
     border-bottom-color #fff
 
   /* Preloader добавления товара в корзину */
+
   &__product-adding
     width 16px
     height 16px
@@ -169,5 +186,4 @@ export default {
     transform rotate(0deg)
   100%
     transform rotate(360deg)
-
 </style>
