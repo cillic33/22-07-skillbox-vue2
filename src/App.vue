@@ -141,7 +141,6 @@ export default {
 
   &__cart
     /* Preloader для корзины в шапке */
-
     &-indicator
       width 10px
       height 10px
