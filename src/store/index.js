@@ -32,6 +32,9 @@ const store = new Vuex.Store({
     orderInfoLoadingFail: '',
   },
   mutations: {
+    resetIsOrderInfoLoadingFail(state) {
+      state.isOrderInfoLoadingFail = false;
+    },
     updateOrderInfo(state, payload) {
       state.orderInfo = payload;
     },
@@ -280,6 +283,7 @@ const store = new Vuex.Store({
           context.commit('updateOrderInfo', response.data);
         })
         .catch(error => {
+          context.commit('updateOrderInfo', {});
           context.state.isOrderInfoLoadingFail = true;
           context.state.orderInfoLoadingFail = error.response.data.error.message;
         })

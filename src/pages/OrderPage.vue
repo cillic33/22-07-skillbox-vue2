@@ -130,7 +130,7 @@
 <script>
 import axios from 'axios';
 import { API_BASE_URL } from '@/config';
-import { mapGetters } from 'vuex';
+import { mapGetters, mapMutations } from 'vuex';
 import numberFormat from '@/helpers/numderFormat';
 import BaseFormText from '@/components/BaseFormText';
 import BaseFormTextarea from '@/components/BaseFormTextarea';
@@ -155,6 +155,8 @@ export default {
     ...mapGetters(['cartProductsCount', 'cartProducts', 'cartProductsAmountPrice']),
   },
   methods: {
+    ...mapMutations(['resetCart', 'updateOrderInfo']),
+
     sendOrder() {
       this.ErrorData = {};
       this.ErrorMessage = '';
@@ -169,8 +171,8 @@ export default {
           }
         })
         .then(response => {
-          this.$store.commit('resetCart');
-          this.$store.commit('updateOrderInfo', response.data);
+          this.resetCart();
+          this.updateOrderInfo(response.data);
           this.$router.push({
             name: 'orderInfo',
             params: { id: response.data.id }

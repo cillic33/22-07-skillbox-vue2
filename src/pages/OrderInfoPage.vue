@@ -20,13 +20,19 @@
       </ul>
 
       <h1 class="content__title">
-        Заказ оформлен <span>№ {{ orderInfo.id }}</span>
+        Заказ оформлен <span>№ {{ orderInfo.id || '-'}}</span>
       </h1>
     </div>
 
     <transition name="items-fade" mode="out-in">
 
-      <PreloaderBall v-if="isOrderInfoLoading"
+      <div v-if="isOrderInfoLoadingFail" key="isOrderInfoLoadingFail">
+        <p class="message__error">
+          {{ orderInfoLoadingFail }}
+        </p>
+      </div>
+
+      <PreloaderBall v-else-if="isOrderInfoLoading"
                      message="Данные о заказе загружаются..."></PreloaderBall>
 
       <section v-else class="cart" key="orderInfoContent">
@@ -107,7 +113,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapActions, mapGetters, mapMutations } from 'vuex';
 import numberFormat from '@/helpers/numderFormat';
 import PreloaderBall from '@/components/PreloaderBall';
 
@@ -116,16 +122,28 @@ export default {
     PreloaderBall
   },
   computed: {
-    ...mapGetters(['orderInfo', 'isOrderInfoLoading']),
+    ...mapGetters(['orderInfo', 'isOrderInfoLoading', 'isOrderInfoLoadingFail', 'orderInfoLoadingFail']),
+  },
+  methods: {
+    ...mapActions(['loadOrderInfo']),
+    ...mapMutations(['updateOrderInfo', 'resetIsOrderInfoLoadingFail'])
   },
   filters: {
     numberFormat
+  },
+  watch: {
+    '$route.params.id'() {
+      this.loadOrderInfo(this.$route.params.id);
+    }
   },
   created() {
     if (this.$store.state.orderInfo && this.$store.state.orderInfo.id === this.$route.params.id) {
       return;
     }
-    this.$store.dispatch('loadOrderInfo', this.$route.params.id);
+    this.loadOrderInfo(this.$route.params.id);
+  },
+  destroyed() {
+    this.resetIsOrderInfoLoadingFail();
   }
 };
 </script>
